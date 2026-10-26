@@ -1,0 +1,21 @@
+{
+  "_readme": "Sessions from schedule.md. Times are local venue time (Pacific), 24-hour HH:MM. Each session's room must be listed in rooms so walk hints know its building. Notes are short summaries of the session descriptions. Check edits with: python3 tools/validate_schedule.py",
+  "walk_minutes": {"same_building": 5, "different_building": 10},
+  "rooms": {
+    "Hotel Zephyr": {"building": "250 Beach St"},
+    "Main Stage": {"building": "Festival Pavilion"},
+    "Silent Disco Breakouts": {"building": "Festival Pavilion"},
+    "Demos & Donuts (Level 2)": {"building": "Gateway Pavilion"},
+    "Cowell Theater": {"building": "Gateway Pavilion"},
+    "Ship & Tell": {"building": "Firehouse"},
+    "Sandbox, 3rd Floor": {"building": "Building C"},
+  },
+  "sessions": [
+    {"day": "2026-10-27", "start": "15:00", "end": "19:00",
+     "title": "Universe Badge Pickup Party!", "room": "Hotel Zephyr",
+     "speaker": "Special event",
+     "note": "Pick up your badge early and skip the line: snacks, drinks and exclusive Universe merch."},
+  ],
+  "rtc_is_utc": false,
+  "debug_now": null
+}
