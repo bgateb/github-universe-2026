@@ -2,7 +2,7 @@
 
 An offline schedule app for the GitHub Universe 2026 badge. It shows your next session with a live countdown, the room and building, and how long the walk is. When it's time to leave, it pulses the badge's case lights. Your sessions live in a `schedule.json` file on the badge, so the app works without Wi-Fi.
 
-> **Status:** the app has been checked on a computer with the validator and the preview tool, but hasn't been run on a real badge yet. [changelog.md](changelog.md) lists what still needs checking on the device.
+> **Status:** the app has been checked on a computer with the validator and the preview tool, but hasn't been run on a real badge yet.
 
 ## What it shows
 
