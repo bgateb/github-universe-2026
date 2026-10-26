@@ -1,4 +1,4 @@
-# Universe 2026 Schedule
+# Github Universe 2026 Badge App - Schedule Viewer
 
 An offline schedule app for the GitHub Universe 2026 badge. It shows your next session with a live countdown, the room and building, and how long the walk is. When it's time to leave, it pulses the badge's case lights. Your sessions live in a `schedule.json` file on the badge, so the app works without Wi-Fi.
 
