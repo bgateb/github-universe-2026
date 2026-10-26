@@ -1,8 +1,12 @@
-# Github Universe 2026 Badge App - Schedule Viewer
+# Universe 2026 Schedule
 
 An offline schedule app for the GitHub Universe 2026 badge. It shows your next session with a live countdown, the room and building, and how long the walk is. When it's time to leave, it pulses the badge's case lights. Your sessions live in a `schedule.json` file on the badge, so the app works without Wi-Fi.
 
-> **Status:** the app has been checked on a computer with the validator and the preview tool, but hasn't been run on a real badge yet.
+> **Status:** the app has been checked on a computer with the validator and the preview tool, but hasn't been run on a real badge yet. [changelog.md](changelog.md) lists what still needs checking on the device.
+
+![The app moving from the Now screen to the day list, a session's details, the next day, and back](preview/transitions.gif)
+
+The screenshots in this readme come from the [preview tool](#preview-on-a-computer). A light-blue frame means the case lights are on. [preview/sheet.png](preview/sheet.png) shows every screen on one page.
 
 ## What it shows
 
@@ -15,9 +19,21 @@ An offline schedule app for the GitHub Universe 2026 badge. It shows your next s
 - A row of squares along the bottom, one per half hour of the day, shaded like a GitHub contribution graph by how much of that half hour is booked. Red squares are clashes.
 - After your last session, "That's a wrap".
 
+| Next session, with a walk hint | During a session |
+| --- | --- |
+| ![Now screen: next session in 27 minutes, with "Leave by 10:22am, 8 min walk" and the day strip](preview/next-walk.png) | ![Now screen: Opening Keynote with 10 minutes left and the session after it](preview/in-session.png) |
+
+| Time to leave (lights pulse fast) | After your last session |
+| --- | --- |
+| ![Now screen: next session in 8 minutes, with "Leave now" in red](preview/leave-now.png) | ![That's a wrap: 15 sessions over 3 days](preview/wrap.png) |
+
 **Day list:** each day's sessions with time, title and room. The current session is green, the next one gold, and past ones dimmed. A ⚠ marks a clash or a walk you can't make in time.
 
 **Detail:** the full title, speaker, room, the walk from the session before, any clash, and the full note.
+
+| Day list | Detail |
+| --- | --- |
+| ![Day list for Wed Oct 28, with the current session highlighted and two clashes marked](preview/day-list.png) | ![Detail of a session, with its walk from the previous building and a clash warning](preview/detail.png) |
 
 **Case lights:**
 
@@ -41,6 +57,8 @@ The time to leave is the session's start minus the walk. The walk is `different_
 | LEFT / RIGHT | | Previous / next day | |
 
 On the **Set clock** screen, UP / DOWN change the time by 1 minute and LEFT / RIGHT by 1 hour (hold to repeat). A adds a day, and B saves.
+
+<img src="preview/clock-set.png" width="334" alt="Set clock screen showing Wed Oct 28, 9:35am and the button help">
 
 The badge's HOME button closes the app and turns the case lights off.
 
@@ -176,12 +194,14 @@ The app reads the badge's clock as local time. It doesn't sync the time over Wi-
 `tools/badge_preview.py` runs the real app code on your computer and draws the screens with the Mona Sans font. It needs Pillow (`python3 -m pip install pillow`) and downloads the font on first run.
 
 ```bash
-python3 tools/badge_preview.py                                    # mockups of every screen in preview/
+python3 tools/badge_preview.py                                    # mockups of every screen in apps/schedule/preview/
 python3 tools/badge_preview.py --live                             # a window you drive with the keyboard
 python3 tools/badge_preview.py --live --at "2026-10-28 12:25"     # start at a given time
 ```
 
-In the live window, the arrow keys are the d-pad, Z is A, and X is B (hold it for 2 seconds for the clock). `[` and `]` move the time back or forward 5 minutes, and `{` and `}` move it 1 hour. S saves a screenshot, and Q or Esc quits.
+The mockups are the screenshots in this readme, so run it again after changing the layout or your schedule. Each screen keeps the same file name, such as `preview/day-list.png`, and the tool picks times from your `schedule.json`. A few screens only appear when your schedule has them: `next.png` needs a first session with a note, `next-walk.png` and `leave-now.png` need a walk between buildings, and `in-session.png` and `session-starts.png` need two sessions on the same day.
+
+In the live window, the arrow keys are the d-pad, Z is A, and X is B (hold it for 2 seconds for the clock). `[` and `]` move the time back or forward 5 minutes, and `{` and `}` move it 1 hour. S saves a screenshot to `apps/schedule/preview/live-<time>.png` (git ignores these), and Q or Esc quits.
 
 Text sizes are close to the badge's but not identical, so check final layouts on the device.
 
@@ -189,18 +209,25 @@ Text sizes are close to the badge's but not identical, so check final layouts on
 
 | What you see | What to do |
 | --- | --- |
-| **schedule.json problem** on the badge | The message names the session and field. Fix it, run the validator, and copy the file again. |
+| **schedule.json problem** on the badge (example below) | The message names the session and field. Fix it, run the validator, and copy the file again. |
 | **Clock not set** | Hold B for 2 seconds and set the time. |
 | Times off by exactly 7 hours | The badge clock runs on UTC. Set `"rtc_is_utc": true`. |
 | Red **DEBUG** in the top bar | Set `debug_now` back to `null`. |
 | A session shows no building, or a walk hint is missing | Its `room` isn't in `rooms`, or is spelled differently. The validator lists these. |
 
-## Files in this repo
+<img src="preview/error-demo.png" width="334" alt="schedule.json problem screen: session 1 has a bad time '9:5'">
+
+## Files in this folder
 
 | File | Purpose | Copy to the badge? |
 | --- | --- | --- |
 | `__init__.py` | The badge app | yes |
 | `schedule_logic.py` | Schedule logic shared with the computer tools | yes |
-| `schedule.json.sample` | Sample Schedule json template with every catalog room pre-populated | no |
+| `schedule.json` | Your schedule | yes |
+| `schedule.json.sample` | Starting point with every catalog room | no |
+| `schedule.md` | Agenda text the current `schedule.json` was built from | no |
+| `PLAN.md` | The original design | no |
+| `changelog.md` | Changes since the first version, and what's still to check on a badge | no |
+| `preview/` | Screenshots from `tools/badge_preview.py`, used in this readme | no |
 
-Related: [tools/validate_schedule.py](../../tools/validate_schedule.py)
+Related: [tools/validate_schedule.py](../../tools/validate_schedule.py), [tools/badge_preview.py](../../tools/badge_preview.py), and [apps/clockprobe/](../clockprobe/), a temporary app for finding out how the badge clock behaves.
