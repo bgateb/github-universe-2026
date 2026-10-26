@@ -1,14 +1,16 @@
-# Schedule logic for the Universe schedule app.
+# Schedule logic for the GitHub Universe 2026 schedule app.
 # Plain Python with no badge imports, so the same file runs on the badge
 # (MicroPython) and on a desktop (CPython) via tools/validate_schedule.py.
 # All times are whole minutes since 1970-01-01 in local venue time.
+#
+# bgateb - 20261026
 
 import json
 import math
 
 PRE_ALERT_MIN = 10  # slow case-light pulse starts this long before a session
-SOLID_MIN = 5       # case lights stay solid for the first minutes of a session
-APPROACH_MIN = 60   # the "next" progress bar fills over this long (or the gap since the last session)
+SOLID_MIN = 5       # case lights stay solid for the first X minutes of a session
+APPROACH_MIN = 60   # the "next" progress bar fills over this amount of time (or the gap since the last session)
 SLOT_MIN = 30       # one square per half hour in the day strip
 DEFAULT_WALK = {"same_building": 5, "different_building": 10}
 

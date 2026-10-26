@@ -1,5 +1,5 @@
 {
-  "_readme": "Sessions from schedule.md. Times are local venue time (Pacific), 24-hour HH:MM. Each session's room must be listed in rooms so walk hints know its building. Notes are short summaries of the session descriptions. Check edits with: python3 tools/validate_schedule.py",
+  "_readme": "Sessions from schedule.md. Times are local venue time (Pacific), 24-hour HH:MM. Each session's room must be listed in rooms so walk hints know its location. Notes are short summaries of the session descriptions. Check any edits with: python3 tools/validate_schedule.py",
   "walk_minutes": {"same_building": 5, "different_building": 10},
   "rooms": {
     "Hotel Zephyr": {"building": "250 Beach St"},
@@ -9,12 +9,35 @@
     "Cowell Theater": {"building": "Gateway Pavilion"},
     "Ship & Tell": {"building": "Firehouse"},
     "Sandbox, 3rd Floor": {"building": "Building C"},
+    "Silent Disco Demos": {"building": "Festival Pavilion"},
+    "The Speakeasy (GitHub Central)": {"building": "Festival Pavilion"},
+    "Workshops (Level 1)": {"building": "Gateway Pavilion"},
+    "Outdoor Theater": {"building": "Gateway Plaza"},
+    "The Interval": {"building": "Building A"},
+    "BATS Theatre, 3rd Floor": {"building": "Building B"},
+    "Equator Coffee": {"building": "Fort Mason"},
+    "Radhaus": {"building": "Fort Mason"},
+    "Bar Darling": {"building": "2263 Chestnut St"},
+    "Barebottle Beer Garden": {"building": "1525 Cortland Ave"},
+    "Barrio": {"building": "900 North Point St"},
+    "Broad Street Oyster Co": {"building": "900 North Point St"},
+    "Culinary Artistas": {"building": "851 Beach St"},
+    "Figma HQ": {"building": "760 Market St"},
+    "Flores San Francisco": {"building": "2030 Union St"},
+    "For the Record": {"building": "2120 Greenwich St"},
+    "Left Door": {"building": "1905 Union St"},
+    "Pier 43 1/2": {"building": "Fisherman's Wharf"},
+    "Redwood Empire Whiskey": {"building": "Redwood Empire Whiskey"},
+    "San Francisco Brewing Co.": {"building": "3150 Polk St"},
+    "Subpar Miniature Golf": {"building": "900 North Point St"},
+    "The Civic Kitchen": {"building": "2961 Mission St"},
+    "Tonga Room & Hurricane Bar": {"building": "Fairmont Hotel"}
   },
   "sessions": [
     {"day": "2026-10-27", "start": "15:00", "end": "19:00",
      "title": "Universe Badge Pickup Party!", "room": "Hotel Zephyr",
      "speaker": "Special event",
-     "note": "Pick up your badge early and skip the line: snacks, drinks and exclusive Universe merch."},
+     "note": "Pick up your badge early and skip the line: snacks, drinks and exclusive Universe merch."}
   ],
   "rtc_is_utc": false,
   "debug_now": null

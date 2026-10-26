@@ -1,10 +1,14 @@
-# Universe 2026 schedule: offline next-session countdown with walk-time hints,
+# Universe 2026 schedule Badger App: offline next-session countdown with walk-time hints,
 # a day list, per-session notes and a case-light alert before each talk.
 # Sessions live in schedule.json next to this file; check edits on a computer
-# with tools/validate_schedule.py. See PLAN.md for the design.
+# with tools/validate_schedule.py.
 #
 # Controls: B (tap) Now <-> List, B (hold 2s) set clock, A open details,
 # UP/DOWN move in the list, LEFT/RIGHT switch day. Screens slide between views.
+# Also runs on a stock Tufty 2350 / the try.badgewa.re simulator, which has
+# A, B, C, UP and DOWN only: C opens details and A is LEFT (see BTN_*).
+#
+# bgateb - 20261026
 
 import json
 import math
@@ -22,17 +26,32 @@ try:
 except ImportError:
     secrets = None
 
-import missing_details
-
 APP_DIR = "/system/apps/schedule"
 if APP_DIR not in sys.path:
     sys.path.insert(0, APP_DIR)
+if "/" not in sys.path:
+    sys.path.append("/")  # simulator uploads land in /
 
 import schedule_logic as logic
 
 badge.mode(HIRES | VSYNC)
 screen.antialias = image.X2
-mona_sans = missing_details.mona_sans()
+try:
+    import missing_details  # MonaOS (Universe badge)
+    mona_sans = missing_details.mona_sans()
+except ImportError:
+    # Stock Badgeware and the simulator: load the same font directly.
+    mona_sans = font.load("/system/assets/fonts/MonaSans-Medium.af")
+
+# The 2026 Universe badge has a d-pad plus A (BUTTON_BACK) and B (BUTTON_SELECT).
+# A stock Tufty has A, B, C, UP and DOWN: B selects, C opens details, A is LEFT
+# (days wrap, so one direction reaches them all) and there is no RIGHT.
+try:
+    BTN_SELECT, BTN_OPEN, BTN_LEFT, BTN_RIGHT = BUTTON_SELECT, BUTTON_BACK, BUTTON_LEFT, BUTTON_RIGHT
+    KEY_OPEN = "A"
+except NameError:
+    BTN_SELECT, BTN_OPEN, BTN_LEFT, BTN_RIGHT = BUTTON_B, BUTTON_C, BUTTON_A, None
+    KEY_OPEN = "C"
 
 BG       = color.rgb(10, 12, 20)
 CARD     = color.rgb(32, 38, 58)
@@ -59,7 +78,7 @@ CONTRIB = [color.rgb(*c) for c in CONTRIB_RGB]
 CONTRIB_PAST = [mix(c, BG_RGB, 0.55) for c in CONTRIB_RGB]
 CLASH_PAST = mix((235, 80, 80), BG_RGB, 0.55)
 
-SCHEDULE_PATHS = (APP_DIR + "/schedule.json", "schedule.json")
+SCHEDULE_PATHS = (APP_DIR + "/schedule.json", "schedule.json", "/schedule.json")
 CACHE_DIR = "/state"
 CLOCK_FILE = CACHE_DIR + "/schedule_clock.json"
 
@@ -344,7 +363,7 @@ class Hold:
 
     def update(self):
         # Returns "tap" (on release), "hold" (once, while held) or None.
-        if badge.held(self.button):
+        if held(self.button):
             if self.down_at is None:
                 self.down_at = badge.ticks
                 self.fired = False
@@ -359,22 +378,40 @@ class Hold:
         return None
 
 
-b_button = Hold(BUTTON_SELECT, HOLD_MS)
+def pressed(button):
+    return button is not None and badge.pressed(button)
+
+
+def held(button):
+    return button is not None and badge.held(button)
+
+
+b_button = Hold(BTN_SELECT, HOLD_MS)
 
 
 def repeat(button):
     # True on press, then every REPEAT_MS once held past REPEAT_DELAY_MS.
-    if badge.pressed(button):
+    if pressed(button):
         repeat_at[button] = badge.ticks + REPEAT_DELAY_MS
         return True
-    if badge.held(button) and badge.ticks >= repeat_at.get(button, badge.ticks + 1):
+    if held(button) and badge.ticks >= repeat_at.get(button, badge.ticks + 1):
         repeat_at[button] = badge.ticks + REPEAT_MS
         return True
     return False
 
 
+_size_kw = False  # set if this firmware wants font_size= rather than a 4th argument
+
+
 def put_text(text, x, y, size):
-    screen.text(text, x + ox, y, size)
+    global _size_kw
+    if not _size_kw:
+        try:
+            screen.text(text, x + ox, y, size)
+            return
+        except TypeError:
+            _size_kw = True
+    screen.text(text, x + ox, y, font_size=size)
 
 
 def put_rect(x, y, w, h):
@@ -691,7 +728,7 @@ def draw_list(st, now, day_idx, cur_idx):
             draw_icon("warn", 300, y + 12)
 
     screen.pen = DIM
-    keys = "A: details   B: back"
+    keys = KEY_OPEN + ": details   B: back"
     put_text(keys, 8, 224, 11)
     x = 8 + int(text_w(keys, 11)) + 14
     draw_icon("warn", x, 224 + int(11 * ICON_MID + 0.5) - ICONS["warn"][1] // 2)
@@ -713,7 +750,8 @@ def draw_detail(s, now):
         icon_line("person", s["speaker"], y, 14)
         y += 20
     hint = logic.walk_hint(sched, s)
-    if hint is not None:
+    # Overlapping sessions get the "Clashes with" line below instead.
+    if hint is not None and s["start"] >= hint["from"]["end"]:
         gap = s["start"] - hint["from"]["end"]
         if hint["tight"]:
             screen.pen = RED
@@ -760,8 +798,11 @@ def draw_clock(now):
     center_text(logic.fmt_time(shown // 60), 96, 48)
     screen.pen = DIM
     center_text("UP / DOWN   +/- 1 minute", 168, 14)
-    center_text("LEFT / RIGHT   +/- 1 hour", 186, 14)
-    center_text("A   +1 day        B   save", 204, 14)
+    if BTN_RIGHT is None:
+        center_text("A   -1 hour", 186, 14)
+    else:
+        center_text("LEFT / RIGHT   +/- 1 hour", 186, 14)
+    center_text(KEY_OPEN + "   +1 day        B   save", 204, 14)
     if debug_base is not None:
         screen.pen = RED
         center_text("debug_now is set, so changes won't be saved", 224, 12)
@@ -811,16 +852,16 @@ def update():
             open_list(st, now)
     elif view == VIEW_LIST:
         items = day_items[list_day]
-        if badge.pressed(BUTTON_UP):
+        if pressed(BUTTON_UP):
             cursor = max(0, cursor - 1)
-        elif badge.pressed(BUTTON_DOWN):
+        elif pressed(BUTTON_DOWN):
             cursor = min(len(items) - 1, cursor + 1)
-        elif (badge.pressed(BUTTON_LEFT) or badge.pressed(BUTTON_RIGHT)) and len(day_items) > 1:
-            step = 1 if badge.pressed(BUTTON_RIGHT) else -1
+        elif (pressed(BTN_LEFT) or pressed(BTN_RIGHT)) and len(day_items) > 1:
+            step = 1 if pressed(BTN_RIGHT) else -1
             start_slide(step)
             list_day = (list_day + step) % len(day_items)
             cursor = focus_index(list_day, st)
-        elif badge.pressed(BUTTON_BACK):
+        elif pressed(BTN_OPEN):
             start_slide(1)
             detail = items[cursor]
             view = VIEW_DETAIL
@@ -828,7 +869,7 @@ def update():
             start_slide(-1)
             view = VIEW_NOW
     elif view == VIEW_DETAIL:
-        if b == "tap" or badge.pressed(BUTTON_BACK):
+        if b == "tap" or pressed(BTN_OPEN):
             start_slide(-1)
             view = VIEW_LIST
     elif view == VIEW_CLOCK:
@@ -836,11 +877,11 @@ def update():
             edit_delta += 60
         if repeat(BUTTON_DOWN):
             edit_delta -= 60
-        if repeat(BUTTON_RIGHT):
+        if repeat(BTN_RIGHT):
             edit_delta += 3600
-        if repeat(BUTTON_LEFT):
+        if repeat(BTN_LEFT):
             edit_delta -= 3600
-        if badge.pressed(BUTTON_BACK):
+        if pressed(BTN_OPEN):
             edit_delta += 86400
         if b == "tap":
             save_clock()
