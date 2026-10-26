@@ -195,16 +195,12 @@ Text sizes are close to the badge's but not identical, so check final layouts on
 | Red **DEBUG** in the top bar | Set `debug_now` back to `null`. |
 | A session shows no building, or a walk hint is missing | Its `room` isn't in `rooms`, or is spelled differently. The validator lists these. |
 
-## Files in this folder
+## Files in this repo
 
 | File | Purpose | Copy to the badge? |
 | --- | --- | --- |
 | `__init__.py` | The badge app | yes |
 | `schedule_logic.py` | Schedule logic shared with the computer tools | yes |
-| `schedule.json` | Your schedule | yes |
-| `schedule.json.sample` | Starting point with every catalog room | no |
-| `schedule.md` | Agenda text the current `schedule.json` was built from | no |
-| `PLAN.md` | The original design | no |
-| `changelog.md` | Changes since the first version, and what's still to check on a badge | no |
+| `schedule.json.sample` | Sample Schedule json template with every catalog room pre-populated | no |
 
-Related: [tools/validate_schedule.py](../../tools/validate_schedule.py), [tools/badge_preview.py](../../tools/badge_preview.py), and [apps/clockprobe/](../clockprobe/), a temporary app for finding out how the badge clock behaves.
+Related: [tools/validate_schedule.py](../../tools/validate_schedule.py)
