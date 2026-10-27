@@ -9,7 +9,7 @@ import json
 import math
 
 PRE_ALERT_MIN = 10  # slow case-light pulse starts this long before a session
-SOLID_MIN = 5       # case lights stay solid for the first X minutes of a session
+SOLID_MIN = 5       # case lights stay solid for this many minutes at the start of a session
 APPROACH_MIN = 60   # the "next" progress bar fills over this amount of time (or the gap since the last session)
 SLOT_MIN = 30       # one square per half hour in the day strip
 DEFAULT_WALK = {"same_building": 5, "different_building": 10}

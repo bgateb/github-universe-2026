@@ -1,7 +1,7 @@
-# Universe 2026 schedule Badger App: offline next-session countdown with walk-time hints,
+# GitHub Universe 2026 Badge App - Schedule: offline next-session countdown with walk-time hints,
 # a day list, per-session notes and a case-light alert before each talk.
 # Sessions live in schedule.json next to this file; check edits on a computer
-# with tools/validate_schedule.py.
+# with tools/validate_schedule.py (in the repo). See README.md for details.
 #
 # Controls: B (tap) Now <-> List, B (hold 2s) set clock, A open details,
 # UP/DOWN move in the list, LEFT/RIGHT switch day. Screens slide between views.
@@ -26,7 +26,16 @@ try:
 except ImportError:
     secrets = None
 
+try:
+    from badgeware import State  # saves to /state/<key>.json
+except ImportError:
+    State = None
+
 APP_DIR = "/system/apps/schedule"
+try:
+    os.chdir(APP_DIR)  # badge app convention, so relative paths find our files
+except OSError:
+    pass  # e.g. the simulator, where this folder doesn't exist
 if APP_DIR not in sys.path:
     sys.path.insert(0, APP_DIR)
 if "/" not in sys.path:
@@ -145,19 +154,30 @@ def setting_int(key, default):
         return default
 
 
+STATE_KEY = "schedule_clock"  # State writes /state/schedule_clock.json, the same as CLOCK_FILE
+
+
 def load_offset():
+    state = {"offset": 0}
     try:
-        with open(CLOCK_FILE, "r") as f:
-            return int(json.load(f).get("offset", 0))
+        if State is not None:
+            State.load(STATE_KEY, state)
+        else:
+            with open(CLOCK_FILE, "r") as f:
+                state.update(json.load(f))
+        return int(state.get("offset", 0))
     except (OSError, ValueError, AttributeError, TypeError):
         return 0
 
 
 def save_offset(offset):
     try:
-        with open(CLOCK_FILE, "w") as f:
-            json.dump({"offset": offset}, f)
-    except OSError as e:
+        if State is not None:
+            State.save(STATE_KEY, {"offset": offset})
+        else:
+            with open(CLOCK_FILE, "w") as f:
+                json.dump({"offset": offset}, f)
+    except (OSError, ValueError, TypeError) as e:
         print("Schedule: couldn't save clock: %s" % e)
 
 

@@ -1,5 +1,5 @@
 {
-  "_readme": "Sessions from schedule.md. Times are local venue time (Pacific), 24-hour HH:MM. Each session's room must be listed in rooms so walk hints know its location. Notes are short summaries of the session descriptions. Check any edits with: python3 tools/validate_schedule.py",
+  "_readme": "Starting point for schedule.json: copy this file to schedule.json and replace the example session with your own. full-schedule.md has every catalog session ready to paste. Times are local venue time (Pacific), 24-hour HH:MM. Each session's room must be listed in rooms so walk hints know its location. Check any edits with: python3 tools/validate_schedule.py",
   "walk_minutes": {"same_building": 5, "different_building": 10},
   "rooms": {
     "Hotel Zephyr": {"building": "250 Beach St"},

@@ -15,7 +15,7 @@ Each `note` is a shortened description. Change it to whatever helps you on the d
 
 ## Rooms
 
-Paste this over the `"rooms"` map in your `schedule.json`:
+Replace the whole `"rooms": { ... }` entry in your `schedule.json` with this, keeping the comma that follows it:
 
 ```json
 "rooms": {
@@ -49,7 +49,7 @@ Paste this over the `"rooms"` map in your `schedule.json`:
   "Subpar Miniature Golf": {"building": "900 North Point St"},
   "The Civic Kitchen": {"building": "2961 Mission St"},
   "Tonga Room & Hurricane Bar": {"building": "Fairmont Hotel"}
-},
+}
 ```
 
 ## Monday, Oct 26
