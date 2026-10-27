@@ -277,11 +277,8 @@ This simulator appears to use your computer's clock. To see an event-day screen 
 | `schedule.json` | Your schedule | yes |
 | `schedule.json.sample` | Starting point with every catalog room | no |
 | `full-schedule.md` | Every session in the Universe catalog, each with a JSON block to copy into `schedule.json` | no |
-| `schedule.md` | Agenda text the current `schedule.json` was built from | no |
-| `PLAN.md` | The original design | no |
-| `changelog.md` | Changes since the first version, and what's still to check on a badge | no |
 | `preview/` | Screenshots used in this README: mockups from `tools/badge_preview.py`, plus `dev-sim.png` from the Developer Simulator | no |
 | `README.md` | This file. Its first sentence is the app's one-line description | no |
-| `assets/` | Two spf13 images; the schedule app doesn't use them | no |
+| `assets/` | images; the schedule app doesn't use them | no |
 
 Related: [tools/validate_schedule.py](../../tools/validate_schedule.py), [tools/badge_preview.py](../../tools/badge_preview.py), and [apps/clockprobe/](../clockprobe/), a temporary app for finding out how the badge clock behaves.
