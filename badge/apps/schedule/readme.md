@@ -1,6 +1,6 @@
 # Universe 2026 Schedule
 
-An offline schedule app for the GitHub Universe 2026 badge. It shows your next session with a live countdown, the room and building, and how long the walk is. When it's time to leave, it pulses the badge's case lights. Your sessions live in a `schedule.json` file on the badge, so the app works without Wi-Fi.
+An offline schedule app for the GitHub Universe 2026 badge. It shows your next session with a live countdown, the room and building, and how long the walk is. When it's time to leave, it pulses the badge's case lights. Your sessions live in a `schedule.json` file on the badge, so the app works without Wi-Fi. [full-schedule.md](full-schedule.md) lists every session in the Universe catalog, ready to copy into that file.
 
 > **Status:** the app has been checked on a computer with the validator and the preview tool, but hasn't been run on a real badge yet. [changelog.md](changelog.md) lists what still needs checking on the device.
 
@@ -76,7 +76,17 @@ cp apps/schedule/schedule.json.sample apps/schedule/schedule.json
 
 This replaces any `schedule.json` that's already there.
 
-Then replace the example in `sessions` with your own picks:
+Then replace the example in `sessions` with your own picks.
+
+**The quick way: copy sessions from [full-schedule.md](full-schedule.md).** It lists every session in the Universe 2026 catalog (161 time slots, Oct 26-29), grouped by day and start time. Each one has its full description and speakers, then a JSON block ready to paste:
+
+1. Find a session you want and copy its JSON block.
+2. Paste it into the `"sessions": [ ... ]` list in `schedule.json`. Put a comma between sessions, but not after the last one.
+3. Repeat for each session, then [check the file](#2-check-it).
+
+The blocks already use the room names from the sample's `rooms` map, so walk hints work without any changes. Each `note` is a shortened description of up to 140 characters. Change it to whatever helps you on the day, such as why you're going or a question to ask.
+
+**Writing a session yourself.** For anything not in the catalog, such as a meeting, use the same format:
 
 ```json
 {"day": "2026-10-28", "start": "09:00", "end": "09:45",
@@ -96,7 +106,7 @@ Then replace the example in `sessions` with your own picks:
 
 Sessions can be in any order; the app sorts them by start time. Overlapping sessions are allowed, and the app marks them as clashes.
 
-**Picking the room.** The catalog shows each location as "Room @ Building", for example "Main Stage @ Festival Pavilion". Use the part before the "@" as `room`. A few rooms keep a floor or area in their name:
+**Picking the room.** Sessions copied from [full-schedule.md](full-schedule.md) already have the right `room`. If you're writing one yourself, the catalog shows each location as "Room @ Building", for example "Main Stage @ Festival Pavilion". Use the part before the "@" as `room`. A few rooms keep a floor or area in their name:
 
 | Catalog location | `room` |
 | --- | --- |
@@ -225,6 +235,7 @@ Text sizes are close to the badge's but not identical, so check final layouts on
 | `schedule_logic.py` | Schedule logic shared with the computer tools | yes |
 | `schedule.json` | Your schedule | yes |
 | `schedule.json.sample` | Starting point with every catalog room | no |
+| `full-schedule.md` | Every session in the Universe catalog, each with a JSON block to copy into `schedule.json` | no |
 | `schedule.md` | Agenda text the current `schedule.json` was built from | no |
 | `PLAN.md` | The original design | no |
 | `changelog.md` | Changes since the first version, and what's still to check on a badge | no |
