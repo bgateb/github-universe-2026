@@ -246,14 +246,10 @@ You can also test the app in your browser, without a badge.
 
 ![The Badger Developer Simulator with the schedule app's three files, schedule.json open in the editor, and the simulated badge counting down to the Universe Badge Pickup Party](preview/dev-sim.png)
 
-**The simulator's clock** appears to run on UTC. This screenshot was taken at 11:23pm Pacific, but the badge shows 6:23am the next day, exactly 7 hours ahead. To see Pacific times, set `"rtc_is_utc": true` in the `schedule.json` you paste in. The app then adds `TIMEZONE` from `secrets.py`, or −7 hours if that isn't set. To try a particular moment instead, set `debug_now`.
-
 **Badgeware simulator (stock Tufty 2350).** The app also runs in the [Badgeware simulator](https://try.badgewa.re), which models a stock Tufty 2350 with fewer buttons (see the [stock Tufty controls](#controls)).
 
 1. In the simulator's file browser, upload `schedule_logic.py` and your `schedule.json`. Uploads go to `/`, which the app also checks.
 2. Open or paste `__init__.py` in the editor and press **Run**.
-
-This simulator appears to use your computer's clock. To see an event-day screen before the event, set `debug_now` in the uploaded `schedule.json`.
 
 ## Troubleshooting
 
@@ -277,8 +273,7 @@ This simulator appears to use your computer's clock. To see an event-day screen 
 | `schedule.json` | Your schedule | yes |
 | `schedule.json.sample` | Starting point with every catalog room | no |
 | `full-schedule.md` | Every session in the Universe catalog, each with a JSON block to copy into `schedule.json` | no |
-| `preview/` | Screenshots used in this README: mockups from `tools/badge_preview.py`, plus `dev-sim.png` from the Developer Simulator | no |
+| `preview/` | Screenshots used in this README | no |
 | `README.md` | This file. Its first sentence is the app's one-line description | no |
-| `assets/` | images; the schedule app doesn't use them | no |
 
-Related: [tools/validate_schedule.py](../../tools/validate_schedule.py), [tools/badge_preview.py](../../tools/badge_preview.py), and [apps/clockprobe/](../clockprobe/), a temporary app for finding out how the badge clock behaves.
+Related: [tools/validate_schedule.py](../../tools/validate_schedule.py)
