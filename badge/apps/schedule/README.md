@@ -179,11 +179,18 @@ cp -X apps/schedule/__init__.py apps/schedule/schedule_logic.py apps/schedule/sc
 
 On Linux, leave out `-X`.
 
+So the clock survives going Home, also copy `clockkeep.py` and `main.py` from the repo root to the root of the drive (see [How the clock works](#how-the-clock-works)). This `main.py` replaces the badge's own. It is the stock file plus a short block at the top that starts `clockkeep`.
+
+```bash
+cp -X clockkeep.py main.py /Volumes/BADGER/
+```
+
 Windows PowerShell (change `F:` to your drive letter):
 
 ```powershell
 New-Item -ItemType Directory -Force F:\apps\schedule | Out-Null
 Copy-Item .\apps\schedule\__init__.py, .\apps\schedule\schedule_logic.py, .\apps\schedule\schedule.json, .\apps\schedule\icon.png F:\apps\schedule\
+Copy-Item .\clockkeep.py, .\main.py F:\
 ```
 
 4. Eject the drive. The badge restarts into MonaOS.
@@ -213,6 +220,7 @@ The app reads the badge's clock as local time. It doesn't sync the time over Wi-
 
 - **Corrections** you save on the Set clock screen are stored on the badge in `/state/schedule_clock.json`, as an offset from the badge clock, so they last until you change them.
 - **A badge clock that has reset** (it reads earlier than 2026) shows the Clock not set screen. Saving then sets the badge clock itself.
+- **Going Home doesn't reset the clock** if the badge has `clockkeep.py`. The badge has no battery-backed clock, and leaving any app reboots it, which used to restart the clock. `clockkeep.py` sits at the root of the badge drive, next to `main.py`, and `main.py` runs it at boot. It saves the time just before each reboot and puts it back afterwards. The reset button or a flat battery still resets the clock.
 - **A badge clock that runs on UTC:** set `"rtc_is_utc": true` in `schedule.json`. The app then adds `TIMEZONE` from `secrets.py` on the badge (hours from GMT, default `-7` for Pacific daylight time). That's a line such as `TIMEZONE = -7` in `secrets.py` at the root of the badge drive.
 - **`debug_now`** replaces the real clock with a fake time that starts when the app opens and then ticks normally. Use it to see how a session looks without waiting for it. While it's set, the top bar shows a red **DEBUG** and clock corrections aren't saved. The validator warns until you set it back to `null`.
 
@@ -246,10 +254,14 @@ You can also test the app in your browser, without a badge.
 
 ![The Badger Developer Simulator with the schedule app's three files, schedule.json open in the editor, and the simulated badge counting down to the Universe Badge Pickup Party](preview/dev-sim.png)
 
+**The simulator's clock** appears to run on UTC. This screenshot was taken at 11:23pm Pacific, but the badge shows 6:23am the next day, exactly 7 hours ahead. To see Pacific times, set `"rtc_is_utc": true` in the `schedule.json` you paste in. The app then adds `TIMEZONE` from `secrets.py`, or −7 hours if that isn't set. To try a particular moment instead, set `debug_now`.
+
 **Badgeware simulator (stock Tufty 2350).** The app also runs in the [Badgeware simulator](https://try.badgewa.re), which models a stock Tufty 2350 with fewer buttons (see the [stock Tufty controls](#controls)).
 
 1. In the simulator's file browser, upload `schedule_logic.py` and your `schedule.json`. Uploads go to `/`, which the app also checks.
 2. Open or paste `__init__.py` in the editor and press **Run**.
+
+This simulator appears to use your computer's clock. To see an event-day screen before the event, set `debug_now` in the uploaded `schedule.json`.
 
 ## Troubleshooting
 
@@ -273,7 +285,8 @@ You can also test the app in your browser, without a badge.
 | `schedule.json` | Your schedule | yes |
 | `schedule.json.sample` | Starting point with every catalog room | no |
 | `full-schedule.md` | Every session in the Universe catalog, each with a JSON block to copy into `schedule.json` | no |
-| `preview/` | Screenshots used in this README | no |
+| `preview/` | Screenshots used in this README: mockups from `tools/badge_preview.py`, plus `dev-sim.png` from the Developer Simulator | no |
 | `README.md` | This file. Its first sentence is the app's one-line description | no |
+| `assets/` | images; the schedule app doesn't use them | no |
 
-Related: [tools/validate_schedule.py](../../tools/validate_schedule.py)
+Related: [tools/validate_schedule.py](../../tools/validate_schedule.py), [tools/badge_preview.py](../../tools/badge_preview.py), and [apps/clockprobe/](../clockprobe/), a temporary app for finding out how the badge clock behaves.
